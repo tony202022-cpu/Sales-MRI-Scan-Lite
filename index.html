@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Skills MRI Scan™ - Free Quick Scan | Diagnose Your Sales DNA</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f0f4f8;
+            position: relative;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Allow text selection on inputs */
+        input, select, textarea, button {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .assessment-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .assessment-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .assessment-header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .mri-badge {
+            display: inline-block;
+            background: #FFD700;
+            color: #1e3c72;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .start-screen {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .benefit-item .icon {
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            user-select: none;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e4e8;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+        
+        .btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            user-select: none;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: #1e3c72;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .question-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e1e4e8;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: #2a5298;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .question-timer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .timer-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .timer-progress {
+            height: 100%;
+            background: #4CAF50;
+            transition: width 1s linear, background 0.3s;
+        }
+        
+        .timer-progress.warning {
+            background: #ff9800;
+        }
+        
+        .timer-progress.danger {
+            background: #f44336;
+        }
+        
+        .timer-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .question-header {
+            margin-bottom: 30px;
+        }
+        
+        .question-number {
+            color: #2a5298;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .scenario {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2a5298;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+        
+        .options {
+            list-style: none;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .option:hover:not(.disabled) {
+            border-color: #2a5298;
+            background: #e8f0fe;
+        }
+        
+        .option.selected {
+            border-color: #2a5298;
+            background: #d4e3fc;
+        }
+        
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .option-letter {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #2a5298;
+            color: white;
+            text-align: center;
+            line-height: 35px;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: 600;
+        }
+        
+        .option.selected .option-letter {
+            background: #1e3c72;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .results-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .score-card {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+        }
+        
+        .overall-score {
+            font-size: 4em;
+            color: #2a5298;
+            font-weight: 700;
+        }
+        
+        .score-label {
+            font-size: 1.5em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .performance-level {
+            font-size: 1.2em;
+            color: #666;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        .integrity-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .warning-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .warning-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .warning-box h3 {
+            color: #d32f2f;
+            margin-bottom: 20px;
+        }
+        
+        .competency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .competency-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e1e4e8;
+            transition: transform 0.3s;
+        }
+        
+        .competency-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .competency-score {
+            font-size: 2em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .cta-section h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .cta-section ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .btn-upgrade {
+            background: white;
+            color: #667eea;
+            padding: 20px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn-upgrade:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .competency-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .assessment-header h1 {
+                font-size: 2em;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="assessment-header">
+                <h1>Sales Skills MRI Scan™</h1>
+                <p class="subtitle">Quick Scan - Diagnose Your Sales DNA in 5 Minutes</p>
+                <div class="mri-badge">⚡ AI-Powered Analysis</div>
+            </div>
+
+            <!-- Start Screen -->
+            <div v-if="stage === 'start'" class="start-screen">
+                <h2>Welcome to Your Sales Health Check-Up</h2>
+                <p style="margin: 20px 0; color: #666; font-size: 1.1em;">
+                    Just like an MRI reveals what's happening inside your body, our Sales Skills MRI Scan™ 
+                    reveals your selling strengths and blind spots through advanced behavioral analysis.
+                </p>
+                
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <span class="icon">🧬</span>
+                        <span>Diagnose your Sales DNA</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="icon">📊</span>
+                        <span>15 Real-world scenarios</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="icon">⏱️</span>
+                        <span>45-second time limits</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="icon">🎯</span>
+                        <span>Instant results</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input v-model="userData.name" type="text" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input v-model="userData.email" type="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input v-model="userData.phone" type="tel" placeholder="Enter your phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label>Company</label>
+                    <input v-model="userData.company" type="text" placeholder="Enter your company name">
+                </div>
+                
+                <button @click="startAssessment" class="btn" :disabled="!canStart">
+                    Start My Sales MRI Scan →
+                </button>
+                
+                <p style="margin-top: 20px; color: #999; font-size: 0.9em;">
+                    🔒 Your data is secure and confidential<br>
+                    ⚠️ Please complete without interruptions for accurate results
+                </p>
+            </div>
+
+            <!-- Question Screen -->
+            <div v-if="stage === 'assessment'" class="question-container">
+                <div class="progress-bar">
+                    <div class="progress" :style="{width: progressPercentage + '%'}"></div>
+                </div>
+                
+                <div class="question-timer">
+                    <div class="timer-bar">
+                        <div class="timer-progress" 
+                             :class="timerClass" 
+                             :style="{width: timerPercentage + '%'}"></div>
+                    </div>
+                    <div class="timer-text">{{ currentQuestionTime }} seconds</div>
+                </div>
+                
+                <div class="question-header">
+                    <div class="question-number">Question {{ currentQuestionIndex + 1 }} of 15</div>
+                    <h3>{{ currentQuestion.category }}</h3>
+                </div>
+                
+                <div class="scenario">
+                    <p>{{ currentQuestion.scenario }}</p>
+                </div>
+                
+                <ul class="options">
+                    <li v-for="(option, index) in currentQuestion.options" 
+                        :key="index"
+                        @click="selectAnswer(index)"
+                        :class="['option', { selected: selectedAnswer === index, disabled: questionLocked }]">
+                        <span class="option-letter">{{ String.fromCharCode(65 + index) }}</span>
+                        <span>{{ option.text }}</span>
+                    </li>
+                </ul>
+                
+                <div class="navigation">
+                    <span style="color: #999;">⚡ Quick decision required</span>
+                    <button @click="nextQuestion" class="btn" :disabled="selectedAnswer === null || questionLocked">
+                        {{ currentQuestionIndex === 14 ? 'Complete Assessment' : 'Next Question' }} →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div v-if="stage === 'results'" class="results-container">
+                <div v-if="integrityScore < 70" class="integrity-warning">
+                    ⚠️ Assessment completed with interruptions. Results may not fully reflect your abilities.
+                </div>
+                
+                <div class="score-card">
+                    <div class="score-label">Your Sales Health Score</div>
+                    <div class="overall-score">{{ overallScore }}%</div>
+                    <div class="performance-level">{{ getPerformanceLevel(overallScore) }}</div>
+                </div>
+                
+                <h2 style="text-align: center; margin-bottom: 30px;">Quick Scan Results</h2>
+                
+                <div class="competency-grid">
+                    <div v-for="(score, category) in categoryScores" :key="category" class="competency-card">
+                        <h4>{{ formatCategoryName(category) }}</h4>
+                        <div class="competency-score" :style="{color: getScoreColor(score)}">
+                            {{ score }}%
+                        </div>
+                        <p>{{ getCompetencyLevel(score) }}</p>
+                    </div>
+                </div>
+                
+                <div class="cta-section">
+                    <h2>🔬 Want Your Complete Sales MRI?</h2>
+                    <p>This quick scan shows surface indicators. Unlock your full diagnosis:</p>
+                    <ul>
+                        <li>✅ 30+ Deep-dive scenarios</li>
+                        <li>✅ Complete SWOT analysis</li>
+                        <li>✅ 90-day improvement roadmap</li>
+                        <li>✅ Industry benchmarking</li>
+                        <li>✅ Detailed 15-page report</li>
+                    </ul>
+                    <a href="#" class="btn-upgrade" @click="upgradeToFull">
+                        Get Full Body Scan →
+                    </a>
+                </div>
+                
+                <button @click="downloadQuickReport" class="btn" style="display: block; margin: 40px auto;">
+                    Download Quick Scan Summary
+                </button>
+            </div>
+
+            <!-- Warning Overlay -->
+            <div v-if="showWarning" class="warning-overlay" @click="dismissWarning">
+                <div class="warning-box">
+                    <h3>⚠️ Assessment Integrity Notice</h3>
+                    <p>{{ warningMessage }}</p>
+                    <button @click="dismissWarning" class="btn">Continue Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    stage: 'start',
+                    userData: {
+                        name: '',
+                        email: '',
+                        phone: '',
+                        company: ''
+                    },
+                    currentQuestionIndex: 0,
+                    selectedAnswer: null,
+                    answers: {},
+                    questionStartTime: null,
+                    questionTimes: {},
+                    
+                    // Timer
+                    questionTimeLimit: 45,
+                    currentQuestionTime: 45,
+                    questionTimer: null,
+                    questionLocked: false,
+                    
+                    // Anti-cheat
+                    suspiciousActivity: {
+                        tabSwitches: 0,
+                        copyAttempts: 0,
+                        rapidAnswers: 0,
+                        timeouts: 0,
+                        focusLoss: 0
+                    },
+                    integrityScore: 100,
+                    showWarning: false,
+                    warningMessage: '',
+                    
+                    // Questions with anti-cheat design
+                    questions: [
+                        {
+                            id: 1,
+                            category: "Real-Time Decision Making",
+                            scenario: "You're 23 minutes into a discovery call. The prospect suddenly says: 'Actually, we just signed with your competitor yesterday.' Your champion looks surprised. The CFO smirks. You have 5 seconds. What's your immediate response?",
+                            options: [
+                                {
+                                    text: "Say 'Congratulations on making a decision. Out of curiosity, what tipped the scales?'",
+                                    scores: { composure: 5, strategy: 5, discovery: 5, professionalism: 5, recovery: 4 }
+                                },
+                                {
+                                    text: "Ask your champion 'Were you aware of this decision?'",
+                                    scores: { composure: 2, strategy: 1, discovery: 2, professionalism: 1, recovery: 1 }
+                                },
+                                {
+                                    text: "Pack up your materials and thank them for their time",
+                                    scores: { composure: 3, strategy: 1, discovery: 1, professionalism: 3, recovery: 1 }
+                                },
+                                {
+                                    text: "Say 'That's interesting. Most clients keep us as a backup vendor. Would that make sense here?'",
+                                    scores: { composure: 4, strategy: 4, discovery: 3, professionalism: 4, recovery: 5 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 2,
+                            category: "Pressure Situations",
+                            scenario: "Mid-presentation, the CEO interrupts: 'This is exactly what we DON'T want. Did you even read our RFP?' The room goes silent. Your screen still shows slide 3 of 47. What do you do?",
+                            options: [
+                                {
+                                    text: "Close your laptop and say 'You're right. Help me understand what you DO want.'",
+                                    scores: { adaptability: 5, humility: 5, recovery: 5, listening: 5, leadership: 5 }
+                                },
+                                {
+                                    text: "Defend yourself: 'I followed the RFP requirements exactly...'",
+                                    scores: { adaptability: 1, humility: 1, recovery: 1, listening: 1, leadership: 1 }
+                                },
+                                {
+                                    text: "Ask 'Which specific part doesn't align with your needs?'",
+                                    scores: { adaptability: 3, humility: 3, recovery: 3, listening: 4, leadership: 3 }
+                                },
+                                {
+                                    text: "Continue presenting to show the value in later slides",
+                                    scores: { adaptability: 1, humility: 1, recovery: 1, listening: 1, leadership: 1 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 3,
+                            category: "Complex Objection Handling",
+                            scenario: "The prospect says: 'We tried a similar solution 2 years ago. Complete disaster. Cost us $2M and the project manager was fired. Why should we risk it again?' Their arms are crossed, voice bitter.",
+                            options: [
+                                {
+                                    text: "Say 'That sounds like a painful experience. What specifically went wrong?'",
+                                    scores: { empathy: 5, discovery: 5, trust: 5, approach: 5, wisdom: 5 }
+                                },
+                                {
+                                    text: "Explain how your solution is completely different",
+                                    scores: { empathy: 2, discovery: 1, trust: 2, approach: 2, wisdom: 2 }
+                                },
+                                {
+                                    text: "Share success stories from similar companies",
+                                    scores: { empathy: 3, discovery: 2, trust: 3, approach: 3, wisdom: 3 }
+                                },
+                                {
+                                    text: "Offer a pilot program to minimize risk",
+                                    scores: { empathy: 3, discovery: 2, trust: 3, approach: 4, wisdom: 3 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 4,
+                            category: "Trust Moments",
+                            scenario: "A prospect asks: 'Between us, I heard your company might be acquired. Should I be worried about investing in your solution?' This is confidential info not public yet. How do you respond?",
+                            options: [
+                                {
+                                    text: "Deny it outright to protect the deal",
+                                    scores: { integrity: 1, trust: 1, judgment: 1, ethics: 1, relationship: 1 }
+                                },
+                                {
+                                    text: "Say 'I can't comment on rumors, but I can share our product roadmap and commitment to customers.'",
+                                    scores: { integrity: 5, trust: 5, judgment: 5, ethics: 5, relationship: 5 }
+                                },
+                                {
+                                    text: "Change the subject to product benefits",
+                                    scores: { integrity: 2, trust: 1, judgment: 2, ethics: 2, relationship: 1 }
+                                },
+                                {
+                                    text: "Break confidentiality and tell them everything",
+                                    scores: { integrity: 3, trust: 2, judgment: 1, ethics: 1, relationship: 2 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 5,
+                            category: "Closing Under Pressure",
+                            scenario: "End of quarter is in 3 hours. Your $200K deal prospect texts: 'Board wants us to wait until Q1. Sorry.' You're at 87% of quota. What's your response?",
+                            options: [
+                                {
+                                    text: "Text: 'What if we could start small this quarter and expand in Q1?'",
+                                    scores: { creativity: 5, persistence: 5, strategy: 5, respect: 5, closing: 5 }
+                                },
+                                {
+                                    text: "Call immediately and offer a massive discount",
+                                    scores: { creativity: 2, persistence: 3, strategy: 1, respect: 2, closing: 2 }
+                                },
+                                {
+                                    text: "Accept it and focus on next quarter",
+                                    scores: { creativity: 1, persistence: 1, strategy: 2, respect: 4, closing: 1 }
+                                },
+                                {
+                                    text: "Text: 'Understood. What would need to change for the board to approve this quarter?'",
+                                    scores: { creativity: 4, persistence: 4, strategy: 4, respect: 5, closing: 4 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 6,
+                            category: "Competitive Intelligence",
+                            scenario: "During pricing discussion, the client shows you a competitor's proposal on their screen by mistake. You see they're 40% cheaper. The client quickly closes it, embarrassed. What now?",
+                            options: [
+                                {
+                                    text: "Pretend you didn't see it and continue with your pricing",
+                                    scores: { ethics: 4, strategy: 2, confidence: 2, value: 2, positioning: 2 }
+                                },
+                                {
+                                    text: "Say 'I noticed the price difference. Let's discuss what's included in each proposal.'",
+                                    scores: { ethics: 5, strategy: 5, confidence: 5, value: 5, positioning: 5 }
+                                },
+                                {
+                                    text: "Immediately lower your price to match",
+                                    scores: { ethics: 3, strategy: 1, confidence: 1, value: 1, positioning: 1 }
+                                },
+                                {
+                                    text: "Make a mental note to use this information later",
+                                    scores: { ethics: 2, strategy: 3, confidence: 3, value: 2, positioning: 2 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 7,
+                            category: "Emotional Intelligence",
+                            scenario: "Your contact starts crying during your meeting, apologizes, and says 'Sorry, this project is tied to layoffs. I might be one of them.' The others look uncomfortable. How do you respond?",
+                            options: [
+                                {
+                                    text: "Suggest taking a 5-minute break",
+                                    scores: { empathy: 4, judgment: 4, humanity: 4, leadership: 4, wisdom: 4 }
+                                },
+                                {
+                                    text: "Say 'I'm so sorry you're going through this. Should we reschedule?'",
+                                    scores: { empathy: 5, judgment: 5, humanity: 5, leadership: 5, wisdom: 5 }
+                                },
+                                {
+                                    text: "Wait silently for them to compose themselves",
+                                    scores: { empathy: 3, judgment: 3, humanity: 3, leadership: 2, wisdom: 3 }
+                                },
+                                {
+                                    text: "Continue presenting to move past the awkwardness",
+                                    scores: { empathy: 1, judgment: 1, humanity: 1, leadership: 1, wisdom: 1 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 8,
+                            category: "Negotiation Tactics",
+                            scenario: "Final negotiation. The buyer says: 'I have approval for your solution, but only if you can throw in professional services for free. Otherwise, we go with the cheaper option.' Your margin disappears with free services. Decide now.",
+                            options: [
+                                {
+                                    text: "Counter: 'I can include services at 50% off if we sign today'",
+                                    scores: { negotiation: 4, value: 4, backbone: 4, strategy: 4, profit: 4 }
+                                },
+                                {
+                                    text: "Say 'I understand. Let me check with my manager' (buying time)",
+                                    scores: { negotiation: 3, value: 3, backbone: 2, strategy: 3, profit: 3 }
+                                },
+                                {
+                                    text: "Accept their terms to win the deal",
+                                    scores: { negotiation: 1, value: 1, backbone: 1, strategy: 1, profit: 1 }
+                                },
+                                {
+                                    text: "Say 'The services ensure your success. What if we phased them over 6 months to spread the cost?'",
+                                    scores: { negotiation: 5, value: 5, backbone: 5, strategy: 5, profit: 5 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 9,
+                            category: "Qualifying Efficiency",
+                            scenario: "Five minutes into a call, you realize this 'VP' is actually an intern gathering info for a school project. They seemed legitimate via email. How do you handle this?",
+                            options: [
+                                {
+                                    text: "Immediately end the call",
+                                    scores: { judgment: 2, professionalism: 1, relationship: 1, efficiency: 3, kindness: 1 }
+                                },
+                                {
+                                    text: "Complete the full presentation as practice",
+                                    scores: { judgment: 2, professionalism: 3, relationship: 3, efficiency: 1, kindness: 3 }
+                                },
+                                {
+                                    text: "Spend 5 minutes giving helpful guidance, then politely exit",
+                                    scores: { judgment: 5, professionalism: 5, relationship: 5, efficiency: 5, kindness: 5 }
+                                },
+                                {
+                                    text: "Lecture them about wasting your time",
+                                    scores: { judgment: 1, professionalism: 1, relationship: 1, efficiency: 1, kindness: 1 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 10,
+                            category: "Recovery Skills",
+                            scenario: "You accidentally share your screen showing an email that says 'This client is difficult, proceed carefully' about the prospect you're presenting to. They saw it. The room goes cold. What's your next move?",
+                            options: [
+                                {
+                                    text: "Own it: 'I apologize. That was unprofessional. The note was about ensuring I prepared thoroughly for your complex needs.'",
+                                    scores: { recovery: 5, integrity: 5, courage: 5, leadership: 5, trust: 4 }
+                                },
+                                {
+                                    text: "Pretend nothing happened and continue presenting",
+                                    scores: { recovery: 1, integrity: 1, courage: 1, leadership: 1, trust: 1 }
+                                },
+                                {
+                                    text: "Make a joke to lighten the mood",
+                                    scores: { recovery: 2, integrity: 2, courage: 2, leadership: 2, trust: 2 }
+                                },
+                                {
+                                    text: "Blame it on a colleague's note",
+                                    scores: { recovery: 1, integrity: 1, courage: 1, leadership: 1, trust: 1 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 11,
+                            category: "Strategic Thinking",
+                            scenario: "Your champion pulls you aside: 'The CFO wants to go with your competitor. But if you can get the CEO excited in the next meeting, we can override him.' The CEO cares about innovation, CFO about cost. Your move?",
+                            options: [
+                                {
+                                    text: "Focus entirely on ROI to win over the CFO",
+                                    scores: { strategy: 2, analysis: 2, influence: 2, political: 1, wisdom: 2 }
+                                },
+                                {
+                                    text: "Present innovation stories while weaving in strong ROI data",
+                                    scores: { strategy: 5, analysis: 5, influence: 5, political: 5, wisdom: 5 }
+                                },
+                                {
+                                    text: "Focus only on innovation to excite the CEO",
+                                    scores: { strategy: 3, analysis: 2, influence: 3, political: 3, wisdom: 2 }
+                                },
+                                {
+                                    text: "Ask to meet with the CFO separately first",
+                                    scores: { strategy: 3, analysis: 3, influence: 2, political: 2, wisdom: 3 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 12,
+                            category: "Pipeline Reality",
+                            scenario: "Your manager asks about your 'committed' deal in the forecast call. Truth: the client verbally agreed but is now ghosting you. The deal is 30% of your quota. What do you tell your manager?",
+                            options: [
+                                {
+                                    text: "It's fully committed, just finalizing paperwork",
+                                    scores: { integrity: 1, judgment: 1, communication: 1, trust: 1, courage: 1 }
+                                },
+                                {
+                                    text: "'Verbal yes but they're unresponsive. I'm moving it to 50% probability and here's my rescue plan...'",
+                                    scores: { integrity: 5, judgment: 5, communication: 5, trust: 5, courage: 5 }
+                                },
+                                {
+                                    text: "It's at risk but I'll close it",
+                                    scores: { integrity: 3, judgment: 3, communication: 2, trust: 3, courage: 3 }
+                                },
+                                {
+                                    text: "Blame the client's procurement process",
+                                    scores: { integrity: 2, judgment: 2, communication: 2, trust: 2, courage: 1 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 13,
+                            category: "Consultative Moments",
+                            scenario: "Prospect: 'Honestly, we don't have a real budget. We're just exploring options for next year. Should we continue?' They seem genuinely interested but apologetic about wasting your time.",
+                            options: [
+                                {
+                                    text: "End the conversation politely",
+                                    scores: { vision: 1, relationship: 2, strategy: 1, patience: 1, value: 1 }
+                                },
+                                {
+                                    text: "Say 'Let's design the ideal solution now. When budget appears, you'll be ready to move fast.'",
+                                    scores: { vision: 5, relationship: 5, strategy: 5, patience: 5, value: 5 }
+                                },
+                                {
+                                    text: "Push them to find budget now",
+                                    scores: { vision: 1, relationship: 1, strategy: 1, patience: 1, value: 1 }
+                                },
+                                {
+                                    text: "Schedule a follow-up for next year",
+                                    scores: { vision: 3, relationship: 3, strategy: 3, patience: 4, value: 3 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 14,
+                            category: "Relationship Dynamics",
+                            scenario: "After sending a contract, your champion texts: 'Call me ASAP. Don't email.' When you call, they whisper: 'Legal is about to kill this deal over one clause. What can you do?' You hear people approaching their office.",
+                            options: [
+                                {
+                                    text: "Say 'Send me the specific clause. I'll get approval to modify it within an hour.'",
+                                    scores: { speed: 5, partnership: 5, agility: 5, trust: 5, execution: 5 }
+                                },
+                                {
+                                    text: "Tell them you can't change contracts",
+                                    scores: { speed: 1, partnership: 1, agility: 1, trust: 2, execution: 1 }
+                                },
+                                {
+                                    text: "Ask them to fight for the current terms",
+                                    scores: { speed: 2, partnership: 1, agility: 1, trust: 1, execution: 1 }
+                                },
+                                {
+                                    text: "Schedule a call with legal next week",
+                                    scores: { speed: 1, partnership: 2, agility: 1, trust: 2, execution: 1 }
+                                }
+                            ]
+                        },
+                        {
+                            id: 15,
+                            category: "Moment of Truth",
+                            scenario: "Final decision meeting. The CEO starts: 'We've decided to build this internally instead.' Your champion looks shocked - this wasn't discussed. The room waits for your response. What do you say?",
+                            options: [
+                                {
+                                    text: "'I understand. What led to this decision? I want to ensure you've considered all factors.'",
+                                    scores: { composure: 4, discovery: 4, persistence: 4, respect: 4, strategy: 4 }
+                                },
+                                {
+                                    text: "Present the build vs. buy analysis you prepared",
+                                    scores: { composure: 3, discovery: 2, persistence: 3, respect: 3, strategy: 3 }
+                                },
+                                {
+                                    text: "'Interesting. Would you be open to a hybrid approach where we handle core functionality while you customize?'",
+                                    scores: { composure: 5, discovery: 5, persistence: 5, respect: 5, strategy: 5 }
+                                },
+                                {
+                                    text: "Accept the decision and offer to help with their build",
+                                    scores: { composure: 3, discovery: 1, persistence: 1, respect: 5, strategy: 2 }
+                                }
+                            ]
+                        }
+                    ],
+                    
+                    categoryScores: {},
+                    overallScore: 0,
+                    assessmentComplete: false
+                };
+            },
+            
+            computed: {
+                canStart() {
+                    return this.userData.name && this.userData.email && this.userData.name.length > 1;
+                },
+                currentQuestion() {
+                    return this.questions[this.currentQuestionIndex];
+                },
+                progressPercentage() {
+                    return Math.round(((this.currentQuestionIndex + 1) / this.questions.length) * 100);
+                },
+                timerPercentage() {
+                    return (this.currentQuestionTime / this.questionTimeLimit) * 100;
+                },
+                timerClass() {
+                    if (this.currentQuestionTime <= 10) return 'danger';
+                    if (this.currentQuestionTime <= 20) return 'warning';
+                    return '';
+                }
+            },
+            
+            mounted() {
+                this.initializeAntiCheat();
+            },
+            
+            beforeUnmount() {
+                this.cleanupAntiCheat();
+            },
+            
+            methods: {
+                initializeAntiCheat() {
+                    // Prevent copy/paste on non-input elements
+                    document.addEventListener('copy', this.handleCopy);
+                    document.addEventListener('cut', this.handleCopy);
+                    document.addEventListener('paste', this.handleCopy);
+                    
+                    // Detect tab switches
+                    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+                    
+                    // Detect window blur
+                    window.addEventListener('blur', this.handleWindowBlur);
+                    
+                    // Prevent right-click
+                    document.addEventListener('contextmenu', (e) => {
+                        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                            e.preventDefault();
+                        }
+                    });
+                    
+                    // Detect dev tools - less aggressive
+                    this.devToolsChecker = setInterval(() => {
+                        if (window.outerHeight - window.innerHeight > 200 || 
+                            window.outerWidth - window.innerWidth > 200) {
+                            if (this.stage === 'assessment') {
+                                this.handleSuspiciousActivity('devtools');
+                            }
+                        }
+                    }, 2000);
+                },
+                
+                cleanupAntiCheat() {
+                    document.removeEventListener('copy', this.handleCopy);
+                    document.removeEventListener('cut', this.handleCopy);
+                    document.removeEventListener('paste', this.handleCopy);
+                    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+                    window.removeEventListener('blur', this.handleWindowBlur);
+                    if (this.devToolsChecker) clearInterval(this.devToolsChecker);
+                },
+                
+                handleCopy(e) {
+                    if (this.stage === 'assessment' && 
+                        e.target.tagName !== 'INPUT' && 
+                        e.target.tagName !== 'TEXTAREA') {
+                        e.preventDefault();
+                        this.suspiciousActivity.copyAttempts++;
+                        this.showWarningMessage("Copying is disabled during the assessment.");
+                        this.updateIntegrityScore();
+                    }
+                },
+                
+                handleVisibilityChange() {
+                    if (document.hidden && this.stage === 'assessment') {
+                        this.suspiciousActivity.tabSwitches++;
+                        this.handleSuspiciousActivity('tab_switch');
+                    }
+                },
+                
+                handleWindowBlur() {
+                    if (this.stage === 'assessment') {
+                        this.suspiciousActivity.focusLoss++;
+                        if (this.suspiciousActivity.focusLoss > 3) {
+                            this.handleSuspiciousActivity('focus_loss');
+                        }
+                    }
+                },
+                
+                handleSuspiciousActivity(type) {
+                    this.updateIntegrityScore();
+                    
+                    if (type === 'tab_switch' && this.suspiciousActivity.tabSwitches > 2) {
+                        this.showWarningMessage("Please complete the assessment without switching tabs.");
+                    } else if (type === 'devtools') {
+                        this.showWarningMessage("Developer tools detected. Please close them to continue.");
+                    }
+                },
+                
+                showWarningMessage(message) {
+                    this.warningMessage = message;
+                    this.showWarning = true;
+                },
+                
+                dismissWarning() {
+                    this.showWarning = false;
+                },
+                
+                updateIntegrityScore() {
+                    let score = 100;
+                    score -= (this.suspiciousActivity.tabSwitches * 10);
+                    score -= (this.suspiciousActivity.copyAttempts * 15);
+                    score -= (this.suspiciousActivity.focusLoss * 5);
+                    score -= (this.suspiciousActivity.timeouts * 5);
+                    this.integrityScore = Math.max(0, score);
+                },
+                
+                startAssessment() {
+                    if (this.canStart) {
+                        this.stage = 'assessment';
+                        this.initializeEmailJS();
+                        this.shuffleQuestions();
+                        this.startQuestionTimer();
+                        this.questionStartTime = Date.now();
+                    }
+                },
+                
+                initializeEmailJS() {
+                    // Initialize EmailJS - Replace with your public key
+                    if (typeof emailjs !== 'undefined') {
+                        emailjs.init("YOUR_PUBLIC_KEY_HERE");
+                    }
+                },
+                
+                shuffleQuestions() {
+                    // Randomize question order
+                    for (let i = this.questions.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+                    }
+                    
+                    // Randomize options for each question
+                    this.questions.forEach(question => {
+                        const shuffled = [...question.options];
+                        for (let i = shuffled.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                        }
+                        question.options = shuffled;
+                    });
+                },
+                
+                startQuestionTimer() {
+                    this.currentQuestionTime = this.questionTimeLimit;
+                    this.questionLocked = false;
+                    
+                    if (this.questionTimer) clearInterval(this.questionTimer);
+                    
+                    this.questionTimer = setInterval(() => {
+                        this.currentQuestionTime--;
+                        
+                        if (this.currentQuestionTime <= 0) {
+                            this.handleTimeout();
+                        }
+                    }, 1000);
+                },
+                
+                handleTimeout() {
+                    this.suspiciousActivity.timeouts++;
+                    this.questionLocked = true;
+                    clearInterval(this.questionTimer);
+                    
+                    // Record non-answer
+                    this.answers[this.currentQuestion.id] = {
+                        selectedOption: -1,
+                        timeout: true,
+                        timeSpent: this.questionTimeLimit,
+                        scores: { all: 0 }
+                    };
+                    
+                    // Auto-advance after 2 seconds
+                    setTimeout(() => {
+                        if (this.currentQuestionIndex < 14) {
+                            this.currentQuestionIndex++;
+                            this.selectedAnswer = null;
+                            this.startQuestionTimer();
+                        } else {
+                            this.completeAssessment();
+                        }
+                    }, 2000);
+                },
+                
+                selectAnswer(index) {
+                    if (!this.questionLocked) {
+                        this.selectedAnswer = index;
+                    }
+                },
+                
+                nextQuestion() {
+                    if (this.selectedAnswer !== null && !this.questionLocked) {
+                        clearInterval(this.questionTimer);
+                        
+                        // Calculate time spent
+                        const timeSpent = this.questionTimeLimit - this.currentQuestionTime;
+                        
+                        // Check for too-fast answers
+                        if (timeSpent < 5) {
+                            this.suspiciousActivity.rapidAnswers++;
+                        }
+                        
+                        // Store answer
+                        this.answers[this.currentQuestion.id] = {
+                            selectedOption: this.selectedAnswer,
+                            timeSpent: timeSpent,
+                            scores: this.currentQuestion.options[this.selectedAnswer].scores
+                        };
+                        
+                        if (this.currentQuestionIndex < 14) {
+                            this.currentQuestionIndex++;
+                            this.selectedAnswer = null;
+                            this.startQuestionTimer();
+                        } else {
+                            this.completeAssessment();
+                        }
+                    }
+                },
+                
+                completeAssessment() {
+                    clearInterval(this.questionTimer);
+                    this.calculateScores();
+                    this.stage = 'results';
+                    this.sendResultsEmail();
+                    
+                    // Track completion
+                    if (window.gtag) {
+                        gtag('event', 'assessment_complete', {
+                            'score': this.overallScore,
+                            'integrity': this.integrityScore
+                        });
+                    }
+                },
+                
+                calculateScores() {
+                    const categoryTotals = {};
+                    const categoryCounts = {};
+                    
+                    // Process all answers
+                    Object.values(this.answers).forEach(answer => {
+                        if (answer.scores) {
+                            Object.entries(answer.scores).forEach(([skill, score]) => {
+                                if (!categoryTotals[skill]) {
+                                    categoryTotals[skill] = 0;
+                                    categoryCounts[skill] = 0;
+                                }
+                                categoryTotals[skill] += score;
+                                categoryCounts[skill] += 1;
+                            });
+                        }
+                    });
+                    
+                    // Group into main categories
+                    this.categoryScores = {
+                        'Decision Making': 0,
+                        'Emotional Intelligence': 0,
+                        'Strategic Thinking': 0,
+                        'Negotiation': 0,
+                        'Trust Building': 0,
+                        'Recovery Skills': 0
+                    };
+                    
+                    // Map skills to categories
+                    const categoryMap = {
+                        'Decision Making': ['judgment', 'composure', 'speed', 'adaptability'],
+                        'Emotional Intelligence': ['empathy', 'humanity', 'listening', 'wisdom'],
+                        'Strategic Thinking': ['strategy', 'vision', 'analysis', 'creativity'],
+                        'Negotiation': ['negotiation', 'value', 'positioning', 'influence'],
+                        'Trust Building': ['trust', 'integrity', 'ethics', 'relationship'],
+                        'Recovery Skills': ['recovery', 'agility', 'persistence', 'courage']
+                    };
+                    
+                    // Calculate category scores
+                    Object.entries(categoryMap).forEach(([category, skills]) => {
+                        let total = 0;
+                        let count = 0;
+                        
+                        skills.forEach(skill => {
+                            if (categoryTotals[skill]) {
+                                total += categoryTotals[skill];
+                                count += categoryCounts[skill];
+                            }
+                        });
+                        
+                        if (count > 0) {
+                            this.categoryScores[category] = Math.round((total / (count * 5)) * 100);
+                        }
+                    });
+                    
+                    // Calculate overall score
+                    const scores = Object.values(this.categoryScores);
+                    this.overallScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+                    
+                    // Apply integrity penalty if needed
+                    if (this.integrityScore < 70) {
+                        this.overallScore = Math.round(this.overallScore * (this.integrityScore / 100));
+                    }
+                },
+                
+                formatCategoryName(category) {
+                    return category;
+                },
+                
+                getPerformanceLevel(score) {
+                    if (score >= 85) return "Elite Sales Professional 🏆";
+                    if (score >= 70) return "High Performer 🌟";
+                    if (score >= 55) return "Solid Contributor 💪";
+                    return "Growth Opportunity 🎯";
+                },
+                
+                getCompetencyLevel(score) {
+                    if (score >= 80) return "Master Level";
+                    if (score >= 65) return "Advanced";
+                    if (score >= 50) return "Developing";
+                    return "Foundation";
+                },
+                
+                getScoreColor(score) {
+                    if (score >= 80) return "#10b981";
+                    if (score >= 65) return "#3b82f6";
+                    if (score >= 50) return "#f59e0b";
+                    return "#ef4444";
+                },
+                
+                sendResultsEmail() {
+                    if (typeof emailjs !== 'undefined') {
+                        const templateParams = {
+                            to_name: this.userData.name,
+                            to_email: this.userData.email,
+                            score: this.overallScore,
+                            company: this.userData.company || 'Not specified',
+                            assessment_type: 'Quick Scan',
+                            integrity_score: this.integrityScore
+                        };
+                        
+                        // Replace with your actual EmailJS service and template IDs
+                        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                            .then((response) => {
+                                console.log('Email sent successfully');
+                            }, (error) => {
+                                console.error('Email send failed:', error);
+                            });
+                    }
+                },
+                
+                downloadQuickReport() {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    
+                    // Header
+                    doc.setFontSize(22);
+                    doc.setTextColor(30, 60, 114);
+                    doc.text('Sales Skills MRI Scan™', 105, 25, { align: 'center' });
+                    doc.setFontSize(14);
+                    doc.text('Quick Scan Report', 105, 35, { align: 'center' });
+                    
+                    // User info
+                    doc.setFontSize(11);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(`Name: ${this.userData.name}`, 20, 55);
+                    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 62);
+                    doc.text(`Overall Score: ${this.overallScore}%`, 20, 69);
+                    doc.text(`Assessment Integrity: ${this.integrityScore}%`, 20, 76);
+                    
+                    // Category scores
+                    doc.setFontSize(14);
+                    doc.text('Performance by Category:', 20, 95);
+                    
+                    let yPos = 105;
+                    Object.entries(this.categoryScores).forEach(([category, score]) => {
+                        doc.setFontSize(11);
+                        doc.text(`${category}: ${score}%`, 25, yPos);
+                        yPos += 8;
+                    });
+                    
+                    // Footer
+                    doc.setFontSize(10);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('This is a quick scan only. Upgrade to Full Body Scan for detailed analysis.', 105, 280, { align: 'center' });
+                    
+                    // Save
+                    doc.save(`SalesMRI_QuickScan_${this.userData.name.replace(/\s+/g, '_')}.pdf`);
+                },
+                
+                upgradeToFull() {
+                    // Track conversion
+                    if (window.gtag) {
+                        gtag('event', 'upgrade_clicked', {
+                            'current_score': this.overallScore
+                        });
+                    }
+                    
+                    // Redirect to your sales page
+                    window.location.href = 'https://your-newzenler-sales-page.com';
+                }
+            }
+        }).mount('#app');
+        
+        // Prevent text selection on non-input elements only
+        document.addEventListener('selectstart', function(e) {
+            if (e.target.tagName !== 'INPUT' && 
+                e.target.tagName !== 'SELECT' && 
+                e.target.tagName !== 'TEXTAREA' &&
+                e.target.tagName !== 'BUTTON') {
+                e.preventDefault();
+            }
+        });
+        
+        // Prevent print
+        window.addEventListener('beforeprint', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        });
+    </script>
+</body>
+</html>
